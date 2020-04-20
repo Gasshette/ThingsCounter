@@ -1,19 +1,37 @@
+import 'react-native-gesture-handler';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import ThingsList from './components/thingsList';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import AppConfiguration from './components/app-configuration';
+import styles, { white } from './styles';
+import HeaderRight from './components/header/header-right';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-    </View>
+    // navigation is passed through screenOptions and therefore accessible in headerRight component with useNavigation() Hook
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={() => ({
+          headerStyle: styles.headerStyle,
+          headerTintColor: white,
+          headerTitleStyle: styles.headerTitleStyle,
+          headerRight: () => <HeaderRight />,
+        })}
+      >
+        <Stack.Screen
+          name='thingsList'
+          component={ThingsList}
+          options={{ title: 'Things counter' }}
+        />
+        <Stack.Screen
+          name='appConfiguration'
+          component={AppConfiguration}
+          options={{ title: 'Configuration' }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
