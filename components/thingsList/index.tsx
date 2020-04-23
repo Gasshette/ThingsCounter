@@ -1,42 +1,27 @@
 import React from 'react';
-import { ActivityIndicator, View, FlatList, Text } from 'react-native';
+import { ActivityIndicator, View, FlatList } from 'react-native';
 import Item from './item';
-import { indigo, lightBlue, green, red, yellow } from '../../styles';
+import { colors } from '../../styles';
+import { useThingContextValue, IThingContextProps } from '../../context';
+import IActions from '../../context/interfaces/i-actions';
 
 export default function ThingsList() {
-  const state = {
-    isLoading: false,
-    data: [
-      {
-        id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-        title: 'First Item',
-        backgroundColor: yellow,
-      },
-      {
-        id: '3ac68afc-c605-48d3- a4f8-fbd91aa97f633ac68afc -c605-48d3-a4f8-fbd91aa97f63',
-        title: 'Second Item',
-        backgroundColor: red,
-      },
-      {
-        id: '58694a0f-3da1-471f-bd96-145571e29d72',
-        title: 'Third Item',
-        backgroundColor: green,
-      }
-    ]
-  };
+  const { state, dispatch }: IThingContextProps = useThingContextValue();
 
   if (state.isLoading) {
+    dispatch({ type: 'SET_LOADER' } as IActions);
+
     return (
-      <View>
+      <View style={{ marginTop: 15 }}>
         <ActivityIndicator />
       </View>
     );
   } else {
     return (
-      <View>
+      <View style={{ marginTop: 15 }}>
         <FlatList
-          data={state.data}
-          renderItem={({ item }) => <Item item={item}></Item>}
+          data={state.things}
+          renderItem={({ item }) => <Item thing={item}></Item>}
         />
       </View>
     );
