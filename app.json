@@ -1,29 +1,16 @@
-{
-  "expo": {
-    "name": "ThingsCounter",
-    "slug": "ThingsCounter",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+ {
+   "expo": {
+    "name": "Tings Counter",
+    "icon": "./path/to/your/app-icon.png",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "slug": "your-app-slug",
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.Gasshette.thingscounter",
+      "buildNumber": "1.0.0"
     },
-    "description": ""
-  }
-}
+    "android": {
+      "package": "com.Gasshette.thingscounter",
+      "versionCode": 1
+    }
+   }
+ }

@@ -5,7 +5,15 @@ import thingsMock from './mock';
 
 export interface IState {
   isLoading: boolean;
+  snackbarProps: SnackbarProps;
   things: Array<IThing>;
+}
+
+export interface SnackbarProps {
+  isVisible: boolean;
+  message: string;
+  duration: number;
+  onDismiss: () => void;
 }
 
 export interface IThingProviderProps {
@@ -20,7 +28,8 @@ export interface IThingContextProps {
 
 export const initialState: IState = {
   isLoading: true,
-  things: thingsMock
+  things: thingsMock,
+  snackbarProps: {isVisible: false, message: '', duration: 0, onDismiss: () => {} }
 }
 
 export const ThingsContext = React.createContext(initialState as IThingContextProps);

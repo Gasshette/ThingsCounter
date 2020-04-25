@@ -1,12 +1,11 @@
 import React from 'react';
 import { ActivityIndicator, View, FlatList } from 'react-native';
 import Item from './item';
-import { colors } from '../../styles';
-import { useThingContextValue, IThingContextProps } from '../../context';
+import { useThingContextValue } from '../../context';
 import IActions from '../../context/interfaces/i-actions';
 
 export default function ThingsList() {
-  const { state, dispatch }: IThingContextProps = useThingContextValue();
+  const { state, dispatch } = useThingContextValue();
 
   if (state.isLoading) {
     dispatch({ type: 'SET_LOADER' } as IActions);

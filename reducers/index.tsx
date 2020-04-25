@@ -1,13 +1,17 @@
 import { Reducer } from 'react';
 import IActions from '../context/interfaces/i-actions';
 import { IState } from '../context';
+import * as Types from '../actions/action-types';
 
 const thingReducer: Reducer<IState, IActions> = (state, action) => {
+  let newThings = undefined;
+
   switch (action.type) {
-    case 'SET_LOADER':
+    case Types.SET_LOADER:
       return { ...state, isLoading: !state.isLoading };
-    case 'CHANGE_COLOR':
-      let newThings = Object.assign({}, state.things);
+
+    case Types.CHANGE_COLOR:
+      newThings = Object.assign({}, state.things);
 
       for (let i = 0; i < state.things.length; i++) {
         const element = state.things[i];
@@ -17,8 +21,27 @@ const thingReducer: Reducer<IState, IActions> = (state, action) => {
           return { ...state, things: [...Object.values(newThings)] };
         }
       }
+      return state;
+
+    case Types.UPDATE_THING:
+      newThings = Object.assign({}, state.things);
+      console.log('[reducer] thing = ', action.payload);
+      for (let i = 0; i < state.things.length; i++) {
+        const element = state.things[i];
+
+        if (element.id === action.payload.id) {
+          newThings[i] = action.payload;
+          return { ...state, things: [...Object.values(newThings)] };
+        }
+      }
 
       return state;
+
+    case Types.DISPLAY_SNACKBAR:
+        return { ...state, snackbarProps: action.payload };
+
+    case Types.HIDE_SNACKBAR:
+      return {...state, snackbarProps: {...state.snackbarProps, isVisible: false}};
 
     default:
       return state;

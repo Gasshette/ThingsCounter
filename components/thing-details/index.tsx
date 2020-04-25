@@ -1,13 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { TextInput } from 'react-native-paper';
-import styles, { basePadding } from '../../styles';
+import { TextInput, Button } from 'react-native-paper';
+import styles, { basePadding, colors } from '../../styles';
 import ColorPicker from '../color-picker';
 import { useThingContextValue } from '../../context';
+import IThing from '../../context/interfaces/i-thing';
+import { changeColor, updateThing } from '../../actions';
 
-export default function ThingDetails({ route }: any) {
-  const {state} = useThingContextValue();
-  const [thing, setState] = useState(state.things[route.params.thingId]);
+export default function ThingDetails({ route }: { route: { params?: any } }) {
+  const { state, dispatch } = useThingContextValue();
+  const [isCreationMode] = useState(route?.params?.thingId === undefined);
+  const [timer, setTimer] = useState(0);
+  const [didUpdate, setDidUpdate] = useState(false);
+
+  const defaultThingState = () => {
+    if (!isCreationMode) {
+      return state.things[route.params.thingId];
+    }
+
+    // En mode création, on construit une object Thing pour le push plus tard
+    const emptyThing: IThing = {
+      id: '',
+      color: colors.white,
+      counterValue: '',
+      name: '',
+      step: '',
+    };
+
+    return emptyThing;
+  };
+
+  const [thing, setThing] = useState(defaultThingState());
+
+  // Replicate componentDidUpdate behavior
+  // https://dev.to/savagepixie/how-to-mimic-componentdidupdate-with-react-hooks-3j8c
+  // (See comment section to understand the use of the state instead of ref)
+  useEffect(() => {
+    console.log('didUpdate triggered !');
+    if (!isCreationMode) {
+      console.log('dispatch triggered !');
+      dispatch(updateThing(thing));
+    }
+  }, [thing, isCreationMode]);
+
+  const setThingDebounce = (params: {
+    name?: string;
+    counterValue?: string;
+    step?: string;
+    color?: string;
+  }) => {
+    clearTimeout(timer);
+
+    setTimer(setTimeout(() => setThing({ ...thing, ...params }), 300));
+  };
+
+  const createThing = () => {
+    // dispatch creation action
+    // dispatch snackbar action
+  };
 
   const localStyles = StyleSheet.create({
     container: {
@@ -30,7 +80,7 @@ export default function ThingDetails({ route }: any) {
           label='Name'
           style={localStyles.input}
           value={thing.name}
-          onChangeText={(value: string) => setState({ ...thing, name: value })}
+          onChangeText={(name: string) => setThingDebounce({ name })}
         />
 
         <View style={styles.flexRow}>
@@ -40,8 +90,8 @@ export default function ThingDetails({ route }: any) {
               style={localStyles.input}
               value={thing.counterValue}
               keyboardType={'numeric'}
-              onChangeText={(value: string) =>
-                setState({ ...thing, counterValue: value })
+              onChangeText={(counterValue: string) =>
+                setThingDebounce({ counterValue })
               }
             />
           </View>
@@ -52,14 +102,18 @@ export default function ThingDetails({ route }: any) {
               style={localStyles.input}
               value={thing.step}
               keyboardType={'numeric'}
-              onChangeText={(value: string) =>
-                setState({ ...thing, step: value })
-              }
+              onChangeText={(step: string) => setThingDebounce({ step })}
             />
           </View>
         </View>
 
-        <ColorPicker thing={thing} />
+        <ColorPicker thing={thing} onPick={setThingDebounce} />
+
+        {isCreationMode && (
+          <Button icon='check' onPress={createThing}>
+            Create
+          </Button>
+        )}
       </View>
     </ScrollView>
   );

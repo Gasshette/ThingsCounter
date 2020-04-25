@@ -16,15 +16,33 @@ export default function Header({ scene, previous, navigation }: any) {
     }
   };
 
+  const homeIcon = () => {
+    if (navigation.canGoBack()) {
+      return (
+        <Appbar.Action
+          icon='home'
+          onPress={() => navigation.navigate('thingsList')}
+        />
+      );
+    }
+  };
+
+  const plusIcon = () => {
+    return (
+      <Appbar.Action
+        icon='plus'
+        onPress={() => navigation.navigate('thingDetails')}
+      />
+    );
+  }
+
   return (
     <Appbar.Header>
       {previousIcon()}
 
       <Appbar.Content title={title} />
-      <Appbar.Action
-        icon='home'
-        onPress={() => navigation.navigate('thingsList')}
-      />
+      {homeIcon()}
+      {plusIcon()}
       <Appbar.Action
         icon='settings'
         onPress={() => navigation.navigate('appConfiguration')}

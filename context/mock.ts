@@ -6,7 +6,7 @@ const thingsMock: Array<IThing> = [
     id: '0',
     name: 'Boku no hero Academia',
     counterValue: '10.2',
-    step: '0.1',
+    step: '0.9',
     color: colors.yellow,
   },
   {
