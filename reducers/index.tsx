@@ -26,6 +26,8 @@ const thingReducer: Reducer<IState, IActions> = (state, action) => {
     case Types.UPDATE_THING:
       newThings = Object.assign({}, state.things);
       console.log('[reducer] thing = ', action.payload);
+      console.log('[reducer] newThings = ', newThings);
+
       for (let i = 0; i < state.things.length; i++) {
         const element = state.things[i];
 
@@ -34,14 +36,21 @@ const thingReducer: Reducer<IState, IActions> = (state, action) => {
           return { ...state, things: [...Object.values(newThings)] };
         }
       }
+      // If the thing isn't found, it's a new one so just push it and save in store
+      newThings = Array.from(Object.values(newThings)).push(action.payload);
+      const newState = { ...state, things: newThings };
+      console.log('newState = ', newState);
 
-      return state;
+      return newState;
 
     case Types.DISPLAY_SNACKBAR:
-        return { ...state, snackbarProps: action.payload };
+      return { ...state, snackbarProps: action.payload };
 
     case Types.HIDE_SNACKBAR:
-      return {...state, snackbarProps: {...state.snackbarProps, isVisible: false}};
+      return {
+        ...state,
+        snackbarProps: { ...state.snackbarProps, isVisible: false },
+      };
 
     default:
       return state;

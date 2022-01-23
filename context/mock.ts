@@ -21,8 +21,15 @@ const thingsMock: Array<IThing> = [
     name: 'Martial peak',
     counterValue: '248.5',
     step: '0.5',
-    color: colors.green,
+    color: colors.indigo,
   },
+  {
+    id: '3',
+    name: 'Gobling slayer',
+    counterValue: '34',
+    step: '1',
+    color: colors.green,
+  }
 ];
 
 export default thingsMock;

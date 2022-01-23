@@ -9,7 +9,7 @@ import { useThingContextValue, SnackbarProps } from '../../../context';
 import { updateThing, hideSnackbar, displaySnackbar } from '../../../actions';
 import * as types from '../../../actions/action-types';
 
-export default function Item({ thing }: { thing: IThing }) {
+export default function Item({ thing }: { thing: IThing; }) {
   const navigation = useNavigation();
   const { dispatch } = useThingContextValue();
   const [updateThingTimeout, setUpdateThingTimeout] = useState(0);
@@ -45,7 +45,6 @@ export default function Item({ thing }: { thing: IThing }) {
   });
 
   useEffect(() => {
-    console.log('newCounterValue has changed');
     if (didThingUpdate) {
       setUpdateThingTimeout(
         setTimeout(
@@ -58,12 +57,8 @@ export default function Item({ thing }: { thing: IThing }) {
     return () => clearTimeout(updateThingTimeout);
   }, [newCounterValue]);
 
-  // On render/rerender, we set the counter to the new prop value
   useEffect(() => {
     if (didThingUpdate) {
-      console.log('useEffet Thing triggered');
-      setNewCounterValue(thing.counterValue);
-
       const snackbarProps: SnackbarProps = {
         duration: 1500,
         isVisible: true,
@@ -72,17 +67,16 @@ export default function Item({ thing }: { thing: IThing }) {
       };
 
       dispatch(displaySnackbar(snackbarProps));
+      setDidThingUpdate(false);
     } else {
+      setNewCounterValue(thing.counterValue);
       setDidThingUpdate(true);
     }
   }, [thing]);
 
   const count = (type: string) => {
-    console.log('count triggered');
-    // clearTimeout(updateThingTimeout);
-
     const step = parseFloat(thing.step);
-    const counterValue = parseFloat(thing.counterValue);
+    const counterValue = parseFloat(newCounterValue);
 
     if (type === types.INCREMENT) {
       setNewCounterValue(`${(counterValue + step).toFixed(1)}`);

@@ -5,13 +5,19 @@ import styles, { basePadding, colors } from '../../styles';
 import ColorPicker from '../color-picker';
 import { useThingContextValue } from '../../context';
 import IThing from '../../context/interfaces/i-thing';
-import { changeColor, updateThing } from '../../actions';
+import { updateThing } from '../../actions';
 
-export default function ThingDetails({ route }: { route: { params?: any } }) {
+export default function ThingDetails({
+  route,
+  navigation,
+}: {
+  navigation: any;
+  route: { params?: any };
+}) {
   const { state, dispatch } = useThingContextValue();
   const [isCreationMode] = useState(route?.params?.thingId === undefined);
   const [timer, setTimer] = useState(0);
-  const [didUpdate, setDidUpdate] = useState(false);
+  const [shouldCreate, setShouldCreate] = useState(false);
 
   const defaultThingState = () => {
     if (!isCreationMode) {
@@ -32,16 +38,12 @@ export default function ThingDetails({ route }: { route: { params?: any } }) {
 
   const [thing, setThing] = useState(defaultThingState());
 
-  // Replicate componentDidUpdate behavior
-  // https://dev.to/savagepixie/how-to-mimic-componentdidupdate-with-react-hooks-3j8c
-  // (See comment section to understand the use of the state instead of ref)
   useEffect(() => {
-    console.log('didUpdate triggered !');
-    if (!isCreationMode) {
-      console.log('dispatch triggered !');
+    if (shouldCreate) {
       dispatch(updateThing(thing));
+      navigation.push('thingsList');
     }
-  }, [thing, isCreationMode]);
+  }, [shouldCreate]);
 
   const setThingDebounce = (params: {
     name?: string;
@@ -50,13 +52,13 @@ export default function ThingDetails({ route }: { route: { params?: any } }) {
     color?: string;
   }) => {
     clearTimeout(timer);
-
+    // setThing({ ...thing, ...params });
     setTimer(setTimeout(() => setThing({ ...thing, ...params }), 300));
   };
 
   const createThing = () => {
-    // dispatch creation action
-    // dispatch snackbar action
+    setThing({ ...thing, id: `${state.things.length}` });
+    setShouldCreate(true);
   };
 
   const localStyles = StyleSheet.create({
@@ -109,11 +111,9 @@ export default function ThingDetails({ route }: { route: { params?: any } }) {
 
         <ColorPicker thing={thing} onPick={setThingDebounce} />
 
-        {isCreationMode && (
-          <Button icon='check' onPress={createThing}>
-            Create
-          </Button>
-        )}
+        <Button icon='check' onPress={() => createThing()}>
+          Create
+        </Button>
       </View>
     </ScrollView>
   );
